@@ -1,0 +1,400 @@
+import React, { useState, useEffect } from 'react';
+
+// Custom styles for animations not included in default Tailwind
+const CustomStyles = () => (
+  <style>
+    {`
+      @keyframes pulse-heart {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+      }
+      .animate-pulse-heart {
+        animation: pulse-heart 1.5s infinite ease-in-out;
+      }
+      
+      @keyframes float-up {
+        0% { transform: translateY(20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+      }
+      .animate-float-up {
+        animation: float-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes confetti-fall {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+      }
+      .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        top: -10px;
+        animation: confetti-fall linear forwards;
+      }
+
+      .polaroid-shadow {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 6px 6px rgba(0,0,0,0.2);
+      }
+    `}
+  </style>
+);
+
+// --- Screen Components ---
+
+const StartScreen = ({ onNext }) => (
+  <div 
+    className="h-full w-full bg-slate-50 flex flex-col items-center justify-between py-24 cursor-pointer relative"
+    onClick={onNext}
+  >
+    <div className="w-full px-8 text-center animate-float-up">
+      <h1 className="text-3xl font-bold text-pink-700 leading-tight">
+        Your birthday surprise<br />starts here
+      </h1>
+    </div>
+    
+    <div className="text-9xl animate-pulse-heart drop-shadow-2xl cursor-pointer">
+      ❤️
+    </div>
+    
+    <div className="flex flex-col items-center opacity-70 animate-bounce">
+      <span className="text-4xl">🏹</span>
+      <p className="mt-3 text-sm text-slate-500 font-medium">Pull back the arrow to begin</p>
+    </div>
+  </div>
+);
+
+const YayScreen = ({ onNext }) => (
+  <div 
+    className="h-full w-full bg-pink-500 flex flex-col items-center justify-center p-8 cursor-pointer text-center"
+    onClick={onNext}
+  >
+    <h1 className="text-5xl font-bold text-white mb-6 animate-float-up">
+      It's your birthday!<br/>Yay!! 🎉
+    </h1>
+    <p className="text-pink-100 mt-12 text-sm animate-pulse opacity-80 absolute bottom-16">
+      tap anywhere to continue
+    </p>
+  </div>
+);
+
+const BouquetScreen = ({ onNext }) => (
+  <div 
+    className="h-full w-full bg-white flex flex-col items-center justify-center p-8 cursor-pointer relative"
+    onClick={onNext}
+  >
+    <div className="w-full max-w-sm flex flex-col items-start animate-float-up">
+      <p className="text-xl text-slate-500 mb-1">it's officially your day</p>
+      <h1 className="text-4xl font-extrabold text-pink-600 mb-2">Happy Birthday,<br/>Anmol</h1>
+      <p className="text-lg text-slate-400 italic">and somehow, you are 20 already✨</p>
+    </div>
+    
+    <div className="text-9xl mt-16 animate-pulse-heart">
+      💐
+    </div>
+
+    <p className="text-slate-400 mt-16 text-sm animate-pulse opacity-80 absolute bottom-16">
+      tap anywhere to continue
+    </p>
+  </div>
+);
+
+const CakeScreen = ({ onNext }) => {
+  const [step, setStep] = useState(0);
+  
+  const handleTap = () => {
+    if (step < 4) setStep(s => s + 1);
+  };
+
+  return (
+    <div 
+      className="h-full w-full bg-slate-900 flex flex-col items-center py-16 px-6 text-white cursor-pointer relative"
+      onClick={handleTap}
+    >
+      <h2 className="text-3xl font-bold mt-8 mb-12">Cake first. Obviously. 🎂</h2>
+      
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
+        {/* Cake rendering */}
+        <div className="relative flex flex-col items-center justify-end h-64 mb-8">
+          {step >= 4 && <div className="text-3xl -mb-1 animate-bounce z-20">🔥</div>}
+          {step >= 3 && <div className="w-3 h-10 bg-blue-300 rounded-t-md z-10" />}
+          
+          {step >= 2 && (
+            <div className="w-24 h-12 bg-amber-700 rounded-t-2xl border-b-8 border-amber-900 relative z-10 flex justify-around px-2 pt-2 shadow-lg">
+              <div className="w-2 h-2 rounded-full bg-amber-950"></div>
+              <div className="w-2 h-2 rounded-full bg-amber-950"></div>
+            </div>
+          )}
+          {step >= 1 && (
+            <div className="w-40 h-14 bg-amber-700 rounded-t-2xl border-b-8 border-amber-900 relative z-10 flex justify-around px-4 pt-4 shadow-lg -mt-2">
+              <div className="w-2 h-2 rounded-full bg-amber-950"></div>
+              <div className="w-2 h-2 rounded-full bg-amber-950"></div>
+              <div className="w-2 h-2 rounded-full bg-amber-950"></div>
+            </div>
+          )}
+          {step >= 0 && (
+            <div className="w-56 h-16 bg-amber-700 rounded-t-3xl border-b-8 border-amber-900 relative z-10 flex justify-around px-6 pt-5 shadow-lg -mt-2">
+              <div className="w-3 h-3 rounded-full bg-amber-950"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-950"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-950"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-950"></div>
+            </div>
+          )}
+        </div>
+
+        {step < 4 ? (
+          <p className="text-slate-400 text-sm animate-pulse">Tap anywhere & make a wish 🪄</p>
+        ) : (
+          <div className="flex flex-col items-center animate-float-up">
+            <p className="text-2xl font-serif italic text-yellow-300 mb-6">Happy Birthday, Anmol ✨</p>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onNext(); }} 
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-white font-semibold shadow-lg transition-transform active:scale-95"
+            >
+              Keep going 💛
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const BalloonsScreen = ({ onNext }) => {
+  const [popped, setPopped] = useState([false, false, false, false]);
+  
+  const notes = [
+    "You make ordinary days feel like they're worth showing up for.",
+    "You remember the little things I mention once in passing.",
+    "You're the calm I didn't know I needed until I had it.",
+    "You make me want to be a better version of myself."
+  ];
+
+  const handlePop = (index) => {
+    const newPopped = [...popped];
+    newPopped[index] = true;
+    setPopped(newPopped);
+  };
+
+  const allPopped = popped.every(Boolean);
+
+  return (
+    <div className="h-full w-full bg-slate-900 flex flex-col p-6 text-white relative">
+      <div className="mt-12 mb-8">
+        <h2 className="text-3xl font-bold mb-2">Pop the balloons 🎈</h2>
+        <p className="text-sm text-slate-400">4 reasons are waiting inside. One pop at a time.</p>
+      </div>
+
+      <div className="flex justify-around mb-8 h-24">
+        {[0, 1, 2, 3].map(i => (
+          !popped[i] ? (
+            <div 
+              key={i} 
+              onClick={() => handlePop(i)}
+              className="text-6xl cursor-pointer hover:scale-110 active:scale-90 transition-transform animate-pulse"
+              style={{ filter: `hue-rotate(${i * 60}deg)` }}
+            >
+              🎈
+            </div>
+          ) : (
+            <div key={i} className="w-16 h-16" /> // Placeholder for popped balloon
+          )
+        ))}
+      </div>
+
+      <div className="flex-1 overflow-y-auto space-y-3 pb-24 scrollbar-hide">
+        {notes.map((note, i) => (
+          popped[i] && (
+            <div key={i} className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 animate-float-up">
+              <span className="text-xs text-pink-400 font-bold uppercase tracking-wider mb-1 block">Reason No. {i+1}</span>
+              <p className="text-slate-200">{note}</p>
+            </div>
+          )
+        ))}
+      </div>
+
+      {allPopped && (
+        <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center bg-gradient-to-t from-slate-900 pt-8 pb-4 animate-float-up">
+          <p className="text-slate-400 text-sm italic mb-4">Still nowhere near all the reasons ✨</p>
+          <button 
+            onClick={onNext} 
+            className="px-8 py-3 bg-blue-600 rounded-full text-white font-semibold shadow-lg active:scale-95"
+          >
+            Keep going 💛
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PolaroidScreen = ({ onNext }) => (
+  <div className="h-full w-full bg-slate-900 flex flex-col items-center py-12 px-6 text-white relative">
+    <h2 className="text-3xl font-bold mt-8 mb-12">Remember these? 📸</h2>
+    
+    <div className="bg-white p-4 pb-12 rounded-sm shadow-2xl transform -rotate-2 w-full max-w-[300px] polaroid-shadow animate-float-up">
+      <div className="bg-slate-800 h-64 w-full flex items-center justify-center rounded-sm overflow-hidden p-6 text-center">
+        <p className="text-2xl font-serif text-white font-bold leading-snug drop-shadow-md">
+          I just wanna<br/>See you. Hold you.<br/>Hug you. Touch<br/>you. Kiss you.<br/>Cuddle you.<br/>Love you.
+        </p>
+      </div>
+      <div className="text-center mt-4 text-slate-800 font-handwriting text-xl">
+        💛
+      </div>
+    </div>
+
+    <div className="absolute bottom-12 w-full flex justify-center">
+      <button 
+        onClick={onNext} 
+        className="px-8 py-3 bg-blue-600 rounded-full text-white font-semibold shadow-lg active:scale-95"
+      >
+        Keep going ✨
+      </button>
+    </div>
+  </div>
+);
+
+const LetterIntroScreen = ({ onNext }) => (
+  <div className="h-full w-full bg-slate-900 flex flex-col items-center justify-center p-8 relative text-center">
+    <h2 className="text-3xl font-bold text-white mb-4 animate-float-up">
+      Before this ends,<br/>Anmol...
+    </h2>
+    <p className="text-slate-400 mb-16 animate-float-up" style={{ animationDelay: '0.2s' }}>
+      A letter from Ayushi is waiting inside.
+    </p>
+
+    <div 
+      className="text-[140px] cursor-pointer hover:scale-110 active:scale-95 transition-transform animate-float-up drop-shadow-2xl"
+      style={{ animationDelay: '0.4s' }}
+      onClick={onNext}
+    >
+      ✉️
+    </div>
+
+    <div className="absolute bottom-16 flex flex-col items-center text-slate-400 animate-pulse">
+      <span className="text-2xl mb-2">👇</span>
+      <p>Open when you are ready 💌</p>
+    </div>
+  </div>
+);
+
+const LetterContentScreen = ({ onNext }) => (
+  <div className="h-full w-full bg-slate-900 flex flex-col items-center p-6 relative">
+    <div className="w-full max-w-sm bg-yellow-50 rounded-lg shadow-2xl mt-12 p-6 md:p-8 animate-float-up overflow-y-auto max-h-[70vh]">
+      <h3 className="font-bold text-lg text-slate-800 mb-4">Dear Anmol,</h3>
+      <p className="text-slate-700 leading-relaxed mb-4">
+        My babyy, I want to say so many things to you, but I don't understand what to say. I have so much love in my heart for you, but I don't know how to express it 🥺.
+      </p>
+      <p className="text-slate-700 leading-relaxed mb-4">
+        You are such an amazing human being; I have never seen anyone like you until today, and now I don't even feel like looking at anyone else. Whatever is there, it's just you.
+      </p>
+      <p className="text-slate-700 leading-relaxed mb-8">
+        I have so much love in my heart for you—so much that I can't even show it, and I am always with you. Be happy.
+      </p>
+      <p className="font-bold text-slate-800">
+        All my love,<br/>- Ayushi
+      </p>
+    </div>
+
+    <div className="absolute bottom-8 w-full flex justify-center">
+      <button 
+        onClick={onNext} 
+        className="px-8 py-3 bg-blue-600 rounded-full text-white font-semibold shadow-lg active:scale-95 animate-float-up"
+        style={{ animationDelay: '1s' }}
+      >
+        Keep going
+      </button>
+    </div>
+  </div>
+);
+
+const FinalScreen = () => {
+  const [confetti, setConfetti] = useState([]);
+
+  useEffect(() => {
+    // Generate random confetti pieces
+    const colors = ['bg-pink-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500', 'bg-purple-500'];
+    const pieces = Array.from({ length: 70 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      animationDuration: `${Math.random() * 3 + 2}s`,
+      animationDelay: `${Math.random() * 2}s`,
+      colorClass: colors[Math.floor(Math.random() * colors.length)]
+    }));
+    setConfetti(pieces);
+  }, []);
+
+  return (
+    <div className="h-full w-full bg-slate-900 flex flex-col items-center justify-center p-8 relative overflow-hidden text-center">
+      {/* Confetti container */}
+      <div className="absolute inset-0 pointer-events-none">
+        {confetti.map(c => (
+          <div 
+            key={c.id}
+            className={`confetti ${c.colorClass} rounded-sm`}
+            style={{ 
+              left: c.left, 
+              animationDuration: c.animationDuration, 
+              animationDelay: c.animationDelay 
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="z-10 animate-float-up flex flex-col items-center">
+        <h1 className="text-4xl font-extrabold text-white mb-2 tracking-wide uppercase">
+          Happy<br/>Birthday
+        </h1>
+        <h2 className="text-3xl font-serif italic text-yellow-300 mb-12">Anmol!</h2>
+        
+        <div className="text-8xl drop-shadow-2xl animate-pulse">
+          🧸
+        </div>
+      </div>
+
+      <div className="absolute bottom-10 z-10 opacity-70 animate-float-up" style={{ animationDelay: '1.5s' }}>
+        <p className="text-slate-300 text-sm font-medium">
+          Made with love, just for you — Ayushi 🧡
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// --- Main App Component ---
+
+export default function App() {
+  const [currentScreen, setCurrentScreen] = useState(0);
+
+  const nextScreen = () => {
+    if (currentScreen < 8) {
+      setCurrentScreen(prev => prev + 1);
+    }
+  };
+
+  const screens = [
+    <StartScreen onNext={nextScreen} />,
+    <YayScreen onNext={nextScreen} />,
+    <BouquetScreen onNext={nextScreen} />,
+    <CakeScreen onNext={nextScreen} />,
+    <BalloonsScreen onNext={nextScreen} />,
+    <PolaroidScreen onNext={nextScreen} />,
+    <LetterIntroScreen onNext={nextScreen} />,
+    <LetterContentScreen onNext={nextScreen} />,
+    <FinalScreen />
+  ];
+
+  return (
+    <div className="flex justify-center items-center h-screen w-full bg-neutral-950 font-sans selection:bg-pink-300">
+      <CustomStyles />
+      {/* Mobile container boundary */}
+      <div className="w-full max-w-[400px] h-[100dvh] bg-white relative overflow-hidden shadow-2xl sm:rounded-[2.5rem] sm:h-[850px] sm:max-h-[95vh] sm:border-[8px] border-slate-800">
+        
+        {/* Render current screen */}
+        <div className="absolute inset-0 transition-opacity duration-500">
+          {screens[currentScreen]}
+        </div>
+
+      </div>
+    </div>
+  );
+}
